@@ -8,7 +8,7 @@ def linear_regression(x,y):
     """
     pass #TODO
 
-def peares_correlation(x, y):
+def pearson_correlation(x, y):
     """
     计算皮尔逊相关系数
     参数:

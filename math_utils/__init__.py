@@ -1,2 +1,2 @@
-from .algebra import liner_regression, pearession_correlation
-__all__ = ['linear_regress', 'pearession_correlation']
+from .algebra import linear_regression, pearson_correlation
+__all__ = ['linear_regression', 'pearson_correlation']
