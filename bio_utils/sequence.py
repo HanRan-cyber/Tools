@@ -40,9 +40,19 @@ def gc_content(seq):
     参数:
         seq: str, DNA序列
     返回:
-        float
+        float, GC含量百分比
     """
-    pass  # TODO: 实现
+    seq = seq.upper()  #过滤数据，将所有字母大写
+    gc_count = 0
+    total = 0
+    for base in seq:
+        if base in 'ATCG':  #非ATCG字符不参与计算
+            total += 1
+            if base in 'GC':
+                gc_count += 1
+    if total == 0:
+        return 0.0
+    return (gc_count / total) * 100
 
 def reverse_complement(seq):
     """
