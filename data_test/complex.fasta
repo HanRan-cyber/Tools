@@ -1,0 +1,12 @@
+>gene1  #这是人类基因
+ATCGATCG
+ATCGATCG
+; 这是注释行，应该被跳过
+
+>gene2  #这是小鼠基因
+GCTAGCTA
+GCTAGCTA
+
+>gene3  #这是酵母基因
+TTTTAAAA
+TTTTAAAA
