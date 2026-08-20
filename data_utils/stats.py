@@ -8,12 +8,15 @@ def standardize(data):
     返回:
         list of floats, 均值为0，标准差为1
     """
+    n = len(data)
+    if n == 0:  #预防空列表的情况
+        return []
     avg_data = statistics.mean(data)  #.mean函数用于计算平均值
     std_data = statistics.pstdev(data)  #.pstdev函数用于计算总体标准差
-    for i in range(len(data)):
-        data[i] = (data[i] - avg_data)/std_data  #进行Z-score归一化
-    return data
-
+    if std_data == 0:  #处理标准差为0的情况
+        return [0] * n
+    return [(x - avg_data) / std_data for x in data]
+    #更高级的列表生成方法，需要练习掌握！！！
 
 def outlier_iqr(data, k=1.5):  #四分位距法（IQR）检测异常值的方法
     """
@@ -24,6 +27,8 @@ def outlier_iqr(data, k=1.5):  #四分位距法（IQR）检测异常值的方法
     返回:
         (cleaned_list, outliers_list)
     """
+    if not data:  #预防空列表的情况
+        return [], []
     outliers_list = []
     cleaned_list = []
     q_list = statistics.quantiles(data, n = 4)  #.quantiles函数可把数据按比例切成n等份，并返回各个切割点的数值
@@ -34,8 +39,8 @@ def outlier_iqr(data, k=1.5):  #四分位距法（IQR）检测异常值的方法
 
     #计算IQR和边界
     iqr = q3 - q1
-    lower = q1 - k*iqr
-    upper = q3 + k*iqr
+    lower = q1 - k * iqr
+    upper = q3 + k * iqr
     for item in data:
         if item < lower or item > upper:
             outliers_list.append(item)
