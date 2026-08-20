@@ -13,7 +13,7 @@ def read_fasta(filepath):
     #一行一行地读取文件内容
     for line in file:
         #预处理数据
-        line = line.strip()
+        line = line.strip()  #strip函数可去除字符串首尾的指定字符
         if not line:
             continue
         elif line.startswith(";"):  #startswith() 用于判断字符串是否以指定前缀开头
@@ -24,6 +24,7 @@ def read_fasta(filepath):
                 #split函数用于把字符串按分隔符拆成列表,括号内可添加指定分隔符，在此用于去除注释
             else:
                 result[current_id] = "".join(current_seq)
+                #join函数用于将可迭代对象中的字符串元素以指定分隔符号连接成新的字符串
                 current_seq = []
                 current_id = line[1:].split()[0]  #split函数用于把字符串按分隔符拆成列表，在此用于去除注释
         else:
@@ -62,4 +63,11 @@ def reverse_complement(seq):
     返回:
         str
     """
-    pass  # TODO: 实现
+    complement = {'A': 'T', 'T': 'A', 'C': 'G', 'G': 'C'}  #碱基互补原则的字典
+    result = []
+    for base in seq.upper():
+        if base in complement:
+            result.append(complement[base])
+        else:
+            result.append(base)   # 非ATCG字符原样保留
+    return ''.join(reversed(result))  #reversed函数用于将列表反转
