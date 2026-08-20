@@ -1,3 +1,6 @@
+from misc_utils import *
+
+@timer  #装饰器的运用
 def read_fasta(filepath):
     """
     读取FASTA文件，返回 {id: sequence} 字典
