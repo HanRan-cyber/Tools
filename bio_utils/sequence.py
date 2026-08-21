@@ -37,7 +37,6 @@ def read_fasta(filepath):
     file.close() #关闭文件，释放内存，千万不要忘记
     return result
 
-
 def gc_content(seq):
     """
     计算GC含量（百分比）
@@ -74,3 +73,23 @@ def reverse_complement(seq):
         else:
             result.append(base)   # 非ATCG字符原样保留
     return ''.join(reversed(result))  #reversed函数用于将列表反转
+
+def gc_window(seq, k):
+    """
+    滑动窗口计算 GC 含量百分比
+    参数:
+        seq: str, DNA 序列
+        k: int, 窗口大小
+    返回:
+        list of float, 每个窗口的 GC 含量百分比
+    """
+    if k <= 0 or k > len(seq):  #边界处理
+        return []
+    seq = seq.upper()  #预处理数据
+    window_content = []
+    for i in range(len(seq) - k + 1):
+        gc_window_content = gc_content(seq[i:i+k])  #调用之前的函数完成gc含量的计算
+        window_content.append(gc_window_content)
+    return window_content
+
+
