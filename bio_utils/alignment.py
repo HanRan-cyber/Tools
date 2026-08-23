@@ -21,10 +21,10 @@ def needleman_wunsch(seq1, seq2, match=1, mismatch=-1, gap=-2):
     提示:
         回溯时记录每一步的方向，便于构建字符串。
     """
-    seq1 = seq1.upper()
+    seq1 = seq1.upper() #数据预处理
     seq2 = seq2.upper()
 
-    def score(mat, num1, num2):
+    def score(mat, num1, num2):  #用于计算最大得分的函数
         if seq2[num1 - 1] == seq1[num2 - 1]:
             diag = mat[num1 - 1][num2 - 1] + match
         else:
@@ -33,7 +33,7 @@ def needleman_wunsch(seq1, seq2, match=1, mismatch=-1, gap=-2):
         up = mat[num1][num2 - 1] + gap
         return max(diag, up, left)
 
-    def score_recall(mat, n1, n2):
+    def score_recall(mat, n1, n2):  #用于回溯路径的函数
         if seq1[n1 - 1] == seq2[n2 - 1]:
             return 0
         else:
@@ -43,6 +43,7 @@ def needleman_wunsch(seq1, seq2, match=1, mismatch=-1, gap=-2):
                 return 1
             else:
                 return -1
+    #构建矩阵，即二维列表
     matrix = [[0 for i in range(len(seq1) + 1)] for j in range(len(seq2) + 1)]
     for column in range(len(seq2) + 1):
         matrix[column][0] = gap * column
@@ -58,13 +59,14 @@ def needleman_wunsch(seq1, seq2, match=1, mismatch=-1, gap=-2):
     seq2_list = []
     recall_column = len(seq1)
     recall_row = len(seq2)
+    #确定‘-’插入的位置
     while recall_column > 0 or recall_row > 0:
-        if recall_row == 0:
+        if recall_row == 0:  #边界处理
             # 只能向左（seq1 插入gap）
             seq1_list.append(seq1[recall_column - 1])
             seq2_list.append("-")
             recall_column -= 1
-        elif recall_column == 0:
+        elif recall_column == 0:  #边界处理
             # 只能向上（seq2 插入gap）
             seq1_list.append("-")
             seq2_list.append(seq2[recall_row - 1])
@@ -86,7 +88,7 @@ def needleman_wunsch(seq1, seq2, match=1, mismatch=-1, gap=-2):
                 recall_column -= 1
 
     score = matrix[-1][-1]
-    return score,''.join(reversed(seq1_list)), ''.join(reversed(seq2_list))
+    return score,''.join(reversed(seq1_list)), ''.join(reversed(seq2_list))  #join的用法，要多多记忆
 
 print(needleman_wunsch('GT', 'GAT'))
 
