@@ -39,8 +39,9 @@ def save_data(df, filepath, **kwargs):
     """
     #确保传入的是DataFrame格式
     if not isinstance(df, pd.DataFrame):
+    #isinstance的基本语法‌：isinstance(object, classinfo)，第一个参数是要检查的对象，第二个参数是类型，即某一对象是否为某一类型
         raise TypeError(f'{df}类型错误，参数必须为pandas.DataFrame类型')
-    # os.path.dirname用于从完整路径中提取文件所在的文件夹路径
+    # os.path.dirname()用于从完整路径中提取文件所在的文件夹路径
     dir_name =  os.path.dirname(filepath)  
 
     if dir_name:  #os.makedirs函数不仅可创建最后一层文件夹，还会把路径中所有不存在的父文件夹一并创建。

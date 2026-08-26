@@ -1,6 +1,6 @@
 import statistics  #statistics模块是做基础数学统计的
 
-def standardize(data):
+def standardize(data):  #用于解决量纲不同的问题
     """
     标准化数据（Z-score）
     参数:
