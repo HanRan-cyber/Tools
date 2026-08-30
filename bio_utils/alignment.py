@@ -1,3 +1,5 @@
+import numpy as np
+
 def needleman_wunsch(seq1, seq2, match=1, mismatch=-1, gap=-2):
     """
     Needleman-Wunsch 全局序列比对（动态规划）
@@ -35,20 +37,23 @@ def needleman_wunsch(seq1, seq2, match=1, mismatch=-1, gap=-2):
 
     def score_recall(mat, n1, n2):  #用于回溯路径的函数
         if seq1[n1 - 1] == seq2[n2 - 1]:
-            return 0
+            return 0  #0 代表向左上方走
         else:
             if mat[n2][n1] == mat[n2 - 1][n1 -1] + mismatch:
-                return 0
+                return 0  #0 代表向左上方走
             elif mat[n2][n1] == mat[n2 - 1][n1] + gap:
-                return 1
+                return 1  #1 代表向上走
             else:
-                return -1
+                return -1  #-1 代表向下走
     #构建矩阵，即二维列表
-    matrix = [[0 for i in range(len(seq1) + 1)] for j in range(len(seq2) + 1)]
-    for column in range(len(seq2) + 1):
-        matrix[column][0] = gap * column
-    for row in range(len(seq1) + 1):
-        matrix[0][row] = gap * row
+    matrix = np.zeros((len(seq2) + 1, len(seq1) + 1), dtype=int)
+    # for column in range(len(seq2) + 1):
+    #     matrix[column][0] = gap * column
+    # for row in range(len(seq1) + 1):
+    #     matrix[0][row] = gap * row
+    matrix[0, :] = np.arange(len(seq1) + 1) * gap  #用numpy精简代码
+    matrix[:, 0] = np.arange(len(seq2) + 1) * gap  #用numpy精简代码
+
     for row in range(1, len(seq2) + 1):
         for column in range(1, len(seq1) + 1):
             matrix[row][column] = score(matrix, row, column)
@@ -90,7 +95,4 @@ def needleman_wunsch(seq1, seq2, match=1, mismatch=-1, gap=-2):
     score = matrix[-1][-1]
     return score,''.join(reversed(seq1_list)), ''.join(reversed(seq2_list))  #join的用法，要多多记忆
 
-
-
-
-
+print(needleman_wunsch('ACG', 'ACTG'))
