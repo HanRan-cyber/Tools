@@ -46,7 +46,7 @@ pip install -e .
 安装后即可在任意 Python 脚本中导入使用：
 
 ```python
-from bio_utils import seq_utils
+from bio_utils import sequence
 from bio_utils.alignment import needleman_wunsch
 ```
 
@@ -87,7 +87,6 @@ Tools/
 │   ├── __init__.py
 │   ├── alignment.py            # 序列比对算法（Needleman-Wunsch）
 │   ├── kinetics.py             # 酶动力学计算（米氏方程）
-│   ├── seq_utils.py            # 预留
 │   └── sequence.py             # 序列处理（FASTA 解析、GC 含量等）
 ├── data_utils/                 # 数据处理工具
 │   ├── __init__.py
