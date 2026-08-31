@@ -127,17 +127,39 @@ def translate(seq, frame: int = 1, reverse: bool = False, stop: str = '*') :
     返回：
         翻译得到的蛋白质字符串
     """
-    seq = seq.upper  #数据的预处理
-    peptide_chain = []
-    for item in range(frame,len(seq) + 1, 3):
-        codon = seq[item:item + 3]
+    seq = seq.upper()  #数据的预处理
+    peptide_chain = []  #预设一个储存肽链的列表
+    opposite_peptide_chain = [] #预设一个储存反向肽链的列表
+    for item in range(frame - 1,len(seq) + 1, 3):
+        codon = seq[item:item + 3]  #codon的意思是密码子
         if codon not in CODON_TABLE:
-            raise ValueError(f'{codon}中有错误字母，请检查后再上传')
+            peptide_chain.append('?')
         else:
             amino_acid = CODON_TABLE[codon]
+            if amino_acid == stop:
+                break
             peptide_chain.append(amino_acid)
-        if reverse:
-            pass #TODO:明天再写
+    if reverse:  
+        reserve_seq = reverse_complement(seq)
+        for item in range(frame - 1, len(reserve_seq) + 1, 3):
+            codon = reserve_seq[item : item + 3]  # codon的意思是密码子
+            if codon not in CODON_TABLE:
+                opposite_peptide_chain.append('?')
+            else:
+                amino_acid = CODON_TABLE[codon]
+                if amino_acid == stop:
+                    break
+                opposite_peptide_chain.append(amino_acid)
+    if not reverse:
+        return ''.join(peptide_chain), ''.join(opposite_peptide_chain)
+    else:
+        return ''.join(peptide_chain), ''
+
+    #TODO: 明天解决循环片段的边界可能多取一次的问题
+        
+                    
+
+
 
 
 
