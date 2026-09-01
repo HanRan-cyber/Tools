@@ -1,6 +1,6 @@
 from misc_utils import timer
 
-#该字典用于mRNA的翻译
+#该字典用于DNA的翻译
 CODON_TABLE = {
     'ATA': 'I', 'ATC': 'I', 'ATT': 'I', 'ATG': 'M',
     'ACA': 'T', 'ACC': 'T', 'ACG': 'T', 'ACT': 'T',
@@ -116,7 +116,7 @@ def gc_window(seq, k):
 def translate(seq, frame: int = 1, reverse: bool = False, stop: str = '*') :
 #学习一下这种写法！例如frame: int = 1 中int为提示类型，=1是默认值。调用时不赋值就默认为一，若要赋值则可这样操作：translate(sqe, frame = 2)
     """
-    将 mRNA 序列翻译为蛋白质。
+    将 DNA 序列翻译为蛋白质。
 
     参数：
         seq: DNA 序列字符串（只含 A/T/C/G，大小写均可）
@@ -131,6 +131,8 @@ def translate(seq, frame: int = 1, reverse: bool = False, stop: str = '*') :
     peptide_chain = []  #预设一个储存肽链的列表
     opposite_peptide_chain = [] #预设一个储存反向肽链的列表
     for item in range(frame - 1,len(seq) + 1, 3):
+        if item > len(seq) - 3:
+            break
         codon = seq[item:item + 3]  #codon的意思是密码子
         if codon not in CODON_TABLE:
             peptide_chain.append('?')
@@ -142,6 +144,8 @@ def translate(seq, frame: int = 1, reverse: bool = False, stop: str = '*') :
     if reverse:  
         reserve_seq = reverse_complement(seq)
         for item in range(frame - 1, len(reserve_seq) + 1, 3):
+            if item > len(reserve_seq) - 3:
+                break
             codon = reserve_seq[item : item + 3]  # codon的意思是密码子
             if codon not in CODON_TABLE:
                 opposite_peptide_chain.append('?')
@@ -150,12 +154,11 @@ def translate(seq, frame: int = 1, reverse: bool = False, stop: str = '*') :
                 if amino_acid == stop:
                     break
                 opposite_peptide_chain.append(amino_acid)
-    if not reverse:
+    if  reverse:
         return ''.join(peptide_chain), ''.join(opposite_peptide_chain)
     else:
         return ''.join(peptide_chain), ''
-
-    #TODO: 明天解决循环片段的边界可能多取一次的问题
+    #TODO:明天把代码中逻辑重复的部分写一段函数来替代
         
                     
 
