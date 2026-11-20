@@ -151,5 +151,5 @@ Tools/
 ##  作者
 
 **杨昊然** · 大连理工大学生物制造专业 2026 级  
- 邮箱：[邮箱]  
- GitHub：[ GitHub 主页链接]
+ 邮箱：[yanghr@mail.dlut.edu.cn]()  
+ GitHub：[ [GitHub 主页链接](（https://github.com/HanRan-cyber)]
