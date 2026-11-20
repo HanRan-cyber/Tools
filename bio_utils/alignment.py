@@ -95,4 +95,6 @@ def needleman_wunsch(seq1, seq2, match=1, mismatch=-1, gap=-2):
     score = matrix[-1][-1]
     return score,''.join(reversed(seq1_list)), ''.join(reversed(seq2_list))  #join的用法，要多多记忆
 
-print(needleman_wunsch('ACG', 'ACTG'))
+if __name__ == '__main__':
+    #以前这行是直接写在文件末尾的，一 import 就会打印一遍，挪到这里只在自己跑的时候才执行
+    print(needleman_wunsch('ACG', 'ACTG'))

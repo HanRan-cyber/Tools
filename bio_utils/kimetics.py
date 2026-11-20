@@ -1,4 +1,5 @@
-from math_utils import linear_regression
+#只从小模块里拿函数，这样 import bio_utils 时不会顺带把 matplotlib 也加载进来
+from math_utils.algebra import linear_regression
 
 def enzyme_kinetics(S, v):
     """

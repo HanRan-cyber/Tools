@@ -20,150 +20,184 @@ CODON_TABLE = {
     'TGC': 'C', 'TGT': 'C', 'TGA': '*', 'TGG': 'W',
 }
 
-@timer  #装饰器的运用
-def read_fasta(filepath):
-    """
-    读取FASTA文件，返回 {id: sequence} 字典
-    参数:
-        filepath: str, 文件路径
-    返回:
-        dict
-    """
-    result = {}  #准备一个空字典，用于储存结果
-    current_id = None #存放当前序列的ID
-    current_seq = [] #存放当前序列
-    file = open(filepath, "r") #读取文件。注借助with open(filepath, "r") as f:的写法可不用f.close
-    #一行一行地读取文件内容
-    for line in file:
-        #预处理数据
-        line = line.strip()  #strip函数可去除字符串首尾的指定字符
-        if not line:
-            continue
-        elif line.startswith(";"):  #startswith() 用于判断字符串是否以指定前缀开头
-            continue
-        elif line.startswith(">"):  #startswith() 用于判断字符串是否以指定前缀开头
-            if not current_id:
-                current_id = line[1:].split()[0]
-                #split函数用于把字符串按分隔符拆成列表,括号内可添加指定分隔符，在此用于去除注释
+class DNA_Sequence:
+
+    def __init__(self, name = 'unnamed'):
+        self.name = name
+
+    @timer  #装饰器的运用
+    def read_fasta(self, filepath):
+        """
+        读取FASTA文件，返回 {id: sequence} 字典
+        参数:
+            filepath: str, 文件路径
+        返回:
+            dict
+        """
+        result = {}  #准备一个空字典，用于储存结果
+        current_id = None #存放当前序列的ID
+        current_seq = [] #存放当前序列
+        file = open(filepath, "r") #读取文件。注借助with open(filepath, "r") as f:的写法可不用f.close
+        #一行一行地读取文件内容
+        for line in file:
+            #预处理数据
+            line = line.strip()  #strip函数可去除字符串首尾的指定字符
+            if not line:
+                continue
+            elif line.startswith(";"):  #startswith() 用于判断字符串是否以指定前缀开头
+                continue
+            elif line.startswith(">"):  #startswith() 用于判断字符串是否以指定前缀开头
+                if not current_id:
+                    current_id = line[1:].split()[0]
+                    #split函数用于把字符串按分隔符拆成列表,括号内可添加指定分隔符，在此用于去除注释
+                else:
+                    result[current_id] = "".join(current_seq)
+                    #join函数用于将可迭代对象中的字符串元素以指定分隔符号连接成新的字符串
+                    current_seq = []
+                    current_id = line[1:].split()[0]  #split函数用于把字符串按分隔符拆成列表，在此用于去除注释
             else:
-                result[current_id] = "".join(current_seq)
-                #join函数用于将可迭代对象中的字符串元素以指定分隔符号连接成新的字符串
-                current_seq = []
-                current_id = line[1:].split()[0]  #split函数用于把字符串按分隔符拆成列表，在此用于去除注释
-        else:
-            current_seq.append(line)
-    if current_id is not None:
-        result[current_id] = "".join(current_seq) #解决最后一段序列无法添加到字典的问题
-    file.close() #关闭文件，释放内存，千万不要忘记
-    return result
+                current_seq.append(line)
+        if current_id is not None:
+            result[current_id] = "".join(current_seq) #解决最后一段序列无法添加到字典的问题
+        file.close() #关闭文件，释放内存，千万不要忘记
+        return result
 
-def gc_content(seq):
-    """
-    计算GC含量（百分比）
-    参数:
-        seq: str, DNA序列
-    返回:
-        float, GC含量百分比
-    """
-    seq = seq.upper()  #过滤数据，将所有字母大写
-    gc_count = 0
-    total = 0
-    for base in seq:
-        if base in 'ATCG':  #非ATCG字符不参与计算
-            total += 1
-            if base in 'GC':
-                gc_count += 1
-    if total == 0:
-        return 0.0
-    return (gc_count / total) * 100
+    def gc_content(self, seq):
+        """
+        计算GC含量（百分比）
+        参数:
+            seq: str, DNA序列
+        返回:
+            float, GC含量百分比
+        """
+        seq = seq.upper()  #过滤数据，将所有字母大写
+        gc_count = 0
+        total = 0
+        for base in seq:
+            if base in 'ATCG':  #非ATCG字符不参与计算
+                total += 1
+                if base in 'GC':
+                    gc_count += 1
+        if total == 0:
+            return 0.0
+        return (gc_count / total) * 100
 
-def reverse_complement(seq):
-    """
-    返回反向互补序列
-    参数:
-        seq: str
-    返回:
-        str
-    """
-    complement = {'A': 'T', 'T': 'A', 'C': 'G', 'G': 'C'}  #碱基互补原则的字典
-    result = []
-    for base in seq.upper():
-        if base in complement:
-            result.append(complement[base])
-        else:
-            result.append(base)   # 非ATCG字符原样保留
-    return ''.join(reversed(result))  #reversed函数用于将列表反转
+    def reverse_complement(self, seq):
+        """
+        返回反向互补序列
+        参数:
+            seq: str
+        返回:
+            str
+        """
+        complement = {'A': 'T', 'T': 'A', 'C': 'G', 'G': 'C'}  #碱基互补原则的字典
+        result = []
+        for base in seq.upper():
+            if base in complement:
+                result.append(complement[base])
+            else:
+                result.append(base)   # 非ATCG字符原样保留
+        return ''.join(reversed(result))  #reversed函数用于将列表反转
 
-def gc_window(seq, k):
-    """
-    滑动窗口计算 GC 含量百分比
-    参数:
-        seq: str, DNA 序列
-        k: int, 窗口大小
-    返回:
-        list of float, 每个窗口的 GC 含量百分比
-    """
-    if k <= 0 or k > len(seq):  #边界处理
-        return []
-    seq = seq.upper()  #预处理数据
-    window_content = []
-    for i in range(len(seq) - k + 1):
-        gc_window_content = gc_content(seq[i:i+k])  #调用之前的函数完成gc含量的计算
-        window_content.append(gc_window_content)
-    return window_content
+    def gc_window(self, seq, k):
+        """
+        滑动窗口计算 GC 含量百分比
+        参数:
+            seq: str, DNA 序列
+            k: int, 窗口大小
+        返回:
+            list of float, 每个窗口的 GC 含量百分比
+        """
+        if k <= 0 or k > len(seq):  #边界处理
+            return []
+        seq = seq.upper()  #预处理数据
+        window_content = []
+        for i in range(len(seq) - k + 1):
+            gc_window_content = self.gc_content(seq[i:i+k])  #调用之前的函数完成gc含量的计算
+            window_content.append(gc_window_content)
+        return window_content
 
 
-def translate(seq, frame: int = 1, reverse: bool = False, stop: str = '*') :
-#学习一下这种写法！例如frame: int = 1 中int为提示类型，=1是默认值。调用时不赋值就默认为一，若要赋值则可这样操作：translate(sqe, frame = 2)
-    """
-    将 DNA 序列翻译为蛋白质。
+    def translate(self, seq, frame: int = 1, reverse: bool = False, stop: str = '*') :
+    #学习一下这种写法！例如frame: int = 1 中int为提示类型，=1是默认值。调用时不赋值就默认为一，若要赋值则可这样操作：translate(sqe, frame = 2)
+        """
+        将 DNA 序列翻译为蛋白质。
 
-    参数：
-        seq: DNA 序列字符串（只含 A/T/C/G，大小写均可）
-        frame: 读码框，可选 1, 2, 3（从第几个碱基开始，1-based）
-        reverse: 若为 True，则先进行反向互补再翻译
-        stop: 终止密码子的表示方式，'*' 表示终止符；若设为 None 或 False，则遇到终止密码子提前停止翻译
+        参数：
+            seq: DNA 序列字符串（只含 A/T/C/G，大小写均可）
+            frame: 读码框，可选 1, 2, 3（从第几个碱基开始，1-based）
+            reverse: 若为 True，则先进行反向互补再翻译
+            stop: 终止密码子的表示方式，'*' 表示终止符；若设为 None 或 False，则遇到终止密码子提前停止翻译
 
-    返回：
-        翻译得到的蛋白质字符串
-    """
-    seq = seq.upper()  #数据的预处理
-    peptide_chain = []  #预设一个储存肽链的列表
-    opposite_peptide_chain = [] #预设一个储存反向肽链的列表
-    for item in range(frame - 1,len(seq) + 1, 3):
-        if item > len(seq) - 3:
-            break
-        codon = seq[item:item + 3]  #codon的意思是密码子
-        if codon not in CODON_TABLE:
-            peptide_chain.append('?')
-        else:
-            amino_acid = CODON_TABLE[codon]
-            if amino_acid == stop:
+        返回：
+            (正向肽链, 反向肽链) 元组；reverse=False 时第二个是空字符串
+        """
+        seq = seq.upper()  #数据的预处理
+        peptide_chain = []  #预设一个储存肽链的列表
+        opposite_peptide_chain = [] #预设一个储存反向肽链的列表
+        for item in range(frame - 1,len(seq) + 1, 3):
+            if item > len(seq) - 3:
                 break
-            peptide_chain.append(amino_acid)
-    if reverse:  
-        reserve_seq = reverse_complement(seq)
-        for item in range(frame - 1, len(reserve_seq) + 1, 3):
-            if item > len(reserve_seq) - 3:
-                break
-            codon = reserve_seq[item : item + 3]  # codon的意思是密码子
+            codon = seq[item:item + 3]  #codon的意思是密码子
             if codon not in CODON_TABLE:
-                opposite_peptide_chain.append('?')
+                peptide_chain.append('?')
             else:
                 amino_acid = CODON_TABLE[codon]
                 if amino_acid == stop:
                     break
-                opposite_peptide_chain.append(amino_acid)
-    if  reverse:
-        return ''.join(peptide_chain), ''.join(opposite_peptide_chain)
-    else:
-        return ''.join(peptide_chain), ''
-    #TODO:明天把代码中逻辑重复的部分写一段函数来替代
+                peptide_chain.append(amino_acid)
+        if reverse:
+            reserve_seq = self.reverse_complement(seq)
+            for item in range(frame - 1, len(reserve_seq) + 1, 3):
+                if item > len(reserve_seq) - 3:
+                    break
+                codon = reserve_seq[item : item + 3]  # codon的意思是密码子
+                if codon not in CODON_TABLE:
+                    opposite_peptide_chain.append('?')
+                else:
+                    amino_acid = CODON_TABLE[codon]
+                    if amino_acid == stop:
+                        break
+                    opposite_peptide_chain.append(amino_acid)
+        if  reverse:
+            return ''.join(peptide_chain), ''.join(opposite_peptide_chain)
+        else:
+            return ''.join(peptide_chain), ''
+        #TODO:明天把代码中逻辑重复的部分写一段函数来替代
         
                     
 
 
+# ========== 对外提供的函数式写法 ==========
+# 真正干活的还是上面类里的方法，这里再包一层，
+# 这样 read_fasta("xxx.fasta") 这种写法照样能用，README 和 test.py 不用跟着改
+_default_sequence = DNA_Sequence()
 
 
+def read_fasta(filepath):
+    """读取FASTA文件，返回 {id: sequence} 字典（DNA_Sequence.read_fasta 的快捷写法）"""
+    return _default_sequence.read_fasta(filepath)
 
 
+def gc_content(seq):
+    """计算GC含量百分比（DNA_Sequence.gc_content 的快捷写法）"""
+    return _default_sequence.gc_content(seq)
+
+
+def reverse_complement(seq):
+    """返回反向互补序列（DNA_Sequence.reverse_complement 的快捷写法）"""
+    return _default_sequence.reverse_complement(seq)
+
+
+def gc_window(seq, k):
+    """滑动窗口计算GC含量（DNA_Sequence.gc_window 的快捷写法）"""
+    return _default_sequence.gc_window(seq, k)
+
+
+def translate(seq, frame = 1, reverse = False, stop = '*'):
+    """将DNA序列翻译为蛋白质（DNA_Sequence.translate 的快捷写法）"""
+    return _default_sequence.translate(seq, frame = frame, reverse = reverse, stop = stop)
+
+
+__all__ = ['DNA_Sequence', 'read_fasta', 'gc_content', 'reverse_complement',
+           'gc_window', 'translate']
