@@ -60,18 +60,18 @@ print(seqs.keys())
 
 # 2. 计算 GC 含量
 from bio_utils.sequence import gc_content
-print(gc_content(seqs["gene1"]))
+print(gc_content(seqs["seq1"]))
 
 # 3. 双序列全局比对
 from bio_utils.alignment import needleman_wunsch
-seq1 = "ATCGTAGCTAG"
-seq2 = "ATCGTAGCTAG"
-score, aligned1, aligned2 = needleman_wunsch(seq1, seq2)
+seq_a = "ATCGTAGCTAG"
+seq_b = "ATCGTAGCTAG"
+score, aligned1, aligned2 = needleman_wunsch(seq_a, seq_b)
 print(f"Alignment Score: {score}")
 
 # 4. 翻译成肽链（返回 (正向链, 反向链) 元组）
 from bio_utils.sequence import translate
-forward, reverse = translate(seqs["gene1"], frame=1, reverse=True)
+forward, reverse = translate(seqs["seq1"], frame=1, reverse=True)
 print(forward, reverse)
 
 # 5. 统计运行时间（装饰器）
