@@ -9,9 +9,9 @@
 ## 主要功能
 
 ###  生物信息学工具 (`bio_utils/`)
-- **序列处理** (`sequence.py`)：支持 FASTA 文件的解析与格式化，包含 GC 含量计算、反向互补、窗口gc含量计算等常用操作。
-- **序列比对** (`alignment.py`)：手动实现了经典的 **Needleman-Wunsch 全局比对算法**（支持自定义打分矩阵与空位罚分），深入理解动态规划在生物序列分析中的应用。
-- **酶动力学** (`kinetics.py`)：包含米氏方程（Michaelis-Menten）及相关酶促反应动力学计算（还没完成，正在计划中）工具。
+- **序列处理** (`sequence.py`)：FASTA 解析、GC 含量、反向互补、滑动窗口 GC、密码子翻译。实现放在 `DNA_Sequence` 类里，同时保留同名函数写法，`read_fasta(...)` 和 `DNA_Sequence().read_fasta(...)` 都能用。
+- **序列比对** (`alignment.py`)：手动实现了经典的 **Needleman-Wunsch 全局比对算法**（匹配得分、错配罚分、空位罚分都可以自己给），用来理解动态规划在生物序列分析里怎么落地。
+- **酶动力学** (`kimetics.py`)：用 Lineweaver-Burk 双倒数线性化反推米氏方程参数，输入底物浓度和反应速率，得到 Vmax 与 Km。
 
 ###  数据处理与统计 (`data_utils/`)
 - **文件读写** (`io.py`)：提供统一的接口，支持多种格式（如 excel、CSV、TXT）的数据读取与写出。
@@ -69,7 +69,12 @@ seq2 = "ATCGTAGCTAG"
 score, aligned1, aligned2 = needleman_wunsch(seq1, seq2)
 print(f"Alignment Score: {score}")
 
-# 4. 统计运行时间（装饰器）
+# 4. 翻译成肽链（返回 (正向链, 反向链) 元组）
+from bio_utils.sequence import translate
+forward, reverse = translate(seqs["gene1"], frame=1, reverse=True)
+print(forward, reverse)
+
+# 5. 统计运行时间（装饰器）
 from misc_utils.timer import timer
 @timer
 def my_function():
@@ -77,12 +82,12 @@ def my_function():
     pass
 my_function()
 
-# 5. 批量重命名（dry_run 默认 True，只出计划不改文件）
+# 6. 批量重命名（dry_run 默认 True，只出计划不改文件）
 from misc_utils.file_ops import batch_rename
 for old, new in batch_rename("data_test", prefix="seq_", dry_run=True):
     print(old, "->", new)
 
-# 6. 画一张图并保存（show=False 就只存图，不弹窗）
+# 7. 画一张图并保存（show=False 就只存图，不弹窗）
 from math_utils.plot import line_plot
 line_plot([1, 2, 3, 4], [2.1, 4.0, 5.9, 8.2], title="标准曲线",
           xlabel="浓度", ylabel="吸光度", save_path="output/line.png", show=False)
