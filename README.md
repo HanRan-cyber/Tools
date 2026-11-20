@@ -19,10 +19,10 @@
 
 ###  数学计算与可视化 (`math_utils/`)
 - **代数运算** (`algebra.py`)：线性回归、皮尔逊相关系数及数值计算辅助函数。
-- **绘图工具** (`plot.py`)：基于 Matplotlib 的简洁封装，用于快速绘制序列特征图、动力学曲线等。（计划中）
+- **绘图工具** (`plot.py`)：基于 Matplotlib 的简洁封装，包含折线图、散点图、柱状图三个函数，支持直接存成图片，画序列特征图、动力学曲线都够用。
 
 ###  实用工具 (`misc_utils/`)
-- **文件操作** (`file_ops.py`)：批量文件重命名、路径管理、目录创建等。
+- **文件操作** (`file_ops.py`)：目录创建、按后缀（可递归）列举文件、批量重命名。改名默认只出计划不动文件，撞名会整批拒绝，避免手滑。
 - **计时装饰器** (`timer.py`)：一个 Python 装饰器，用于函数运行耗时统计，方便代码性能调试。
 
 ***
@@ -76,6 +76,16 @@ def my_function():
     # do something
     pass
 my_function()
+
+# 5. 批量重命名（dry_run 默认 True，只出计划不改文件）
+from misc_utils.file_ops import batch_rename
+for old, new in batch_rename("data_test", prefix="seq_", dry_run=True):
+    print(old, "->", new)
+
+# 6. 画一张图并保存（show=False 就只存图，不弹窗）
+from math_utils.plot import line_plot
+line_plot([1, 2, 3, 4], [2.1, 4.0, 5.9, 8.2], title="标准曲线",
+          xlabel="浓度", ylabel="吸光度", save_path="output/line.png", show=False)
 ```
 ***
 
@@ -86,7 +96,7 @@ Tools/
 ├── bio_utils/                  # 生物信息学核心工具
 │   ├── __init__.py
 │   ├── alignment.py            # 序列比对算法（Needleman-Wunsch）
-│   ├── kinetics.py             # 酶动力学计算（米氏方程）
+│   ├── kimetics.py             # 酶动力学计算（米氏方程）
 │   └── sequence.py             # 序列处理（FASTA 解析、GC 含量等）
 ├── data_utils/                 # 数据处理工具
 │   ├── __init__.py
@@ -113,11 +123,11 @@ Tools/
 ##  依赖
 
 - **numpy** —— 数值计算与矩阵运算  
-- **matplotlib** —— 数据可视化绘图  
-- **biopython** —— 生物信息学标准库（用于对照验证）  
+- **pandas** —— 表格数据读写（`data_utils/io.py`）  
+- **scipy** —— 科学计算，`setup.py` 里已经列了  
+- **matplotlib** —— 数据可视化绘图（`math_utils/plot.py`）  
 
 完整依赖清单详见 [`requirements.txt`](./requirements.txt)。
-(其实还没有写)
 ---
 
 ##  贡献与反馈
